@@ -12,6 +12,7 @@ import math
 import heapq
 from collections import defaultdict, deque
 
+
 # ______________________________________________________________________________
 # Functions on Sequences and Iterables
 
@@ -62,6 +63,7 @@ def is_in(elt, seq):
     """Similar to (elt in seq), but compares with 'is', not '=='."""
     return any(x is elt for x in seq)
 
+
 # ______________________________________________________________________________
 # argmin and argmax
 
@@ -86,7 +88,6 @@ def shuffled(iterable):
     items = list(iterable)
     random.shuffle(items)
     return items
-
 
 
 # ______________________________________________________________________________
@@ -165,7 +166,6 @@ def vector_add(a, b):
     return tuple(map(operator.add, a, b))
 
 
-
 def scalar_vector_product(X, Y):
     """Return vector as a product of a scalar and a vector"""
     return [X * y for y in Y]
@@ -181,7 +181,7 @@ def inverse_matrix(X):
     assert len(X[0]) == 2
     det = X[0][0] * X[1][1] - X[0][1] * X[1][0]
     assert det != 0
-    inv_mat = scalar_matrix_product(1.0/det, [[X[1][1], -X[0][1]], [-X[1][0], X[0][0]]])
+    inv_mat = scalar_matrix_product(1.0 / det, [[X[1][1], -X[0][1]], [-X[1][0], X[0][0]]])
 
     return inv_mat
 
@@ -214,7 +214,7 @@ def rounder(numbers, d=4):
     if isinstance(numbers, (int, float)):
         return round(numbers, d)
     else:
-        constructor = type(numbers)     # Can be list, set, tuple, etc.
+        constructor = type(numbers)  # Can be list, set, tuple, etc.
         return constructor(rounder(n, d) for n in numbers)
 
 
@@ -250,12 +250,13 @@ def clip(x, lowest, highest):
 
 def sigmoid(x):
     """Return activation value of x with sigmoid function"""
-    return 1/(1 + math.exp(-x))
+    return 1 / (1 + math.exp(-x))
 
 
 def step(x):
     """Return activation value of x with sign function"""
     return 1 if x >= 0 else 0
+
 
 try:  # math.isclose was added in Python 3.5; but we might be in 3.4
     from math import isclose
@@ -263,6 +264,7 @@ except ImportError:
     def isclose(a, b, rel_tol=1e-09, abs_tol=0.0):
         "Return true if numbers a and b are close to each other."
         return abs(a - b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
+
 
 # ______________________________________________________________________________
 # Misc Functions
@@ -326,8 +328,8 @@ def print_table(table, header=None, sep='   ', numfmt='%g'):
              for row in table]
 
     sizes = list(
-            map(lambda seq: max(map(len, seq)),
-                list(zip(*[map(str, row) for row in table]))))
+        map(lambda seq: max(map(len, seq)),
+            list(zip(*[map(str, row) for row in table]))))
 
     for row in table:
         print(sep.join(getattr(
@@ -366,21 +368,50 @@ class Expr(object):
         self.__hash = None
 
     # Operator overloads
-    def __neg__(self):      return Expr('-', self)
-    def __pos__(self):      return Expr('+', self)
-    def __invert__(self):   return Expr('~', self)
-    def __add__(self, rhs): return Expr('+', self, rhs)
-    def __sub__(self, rhs): return Expr('-', self, rhs)
-    def __mul__(self, rhs): return Expr('*', self, rhs)
-    def __pow__(self, rhs): return Expr('**',self, rhs)
-    def __mod__(self, rhs): return Expr('%', self, rhs)
-    def __and__(self, rhs): return Expr('&', self, rhs)
-    def __xor__(self, rhs): return Expr('^', self, rhs)
-    def __rshift__(self, rhs):   return Expr('>>', self, rhs)
-    def __lshift__(self, rhs):   return Expr('<<', self, rhs)
-    def __truediv__(self, rhs):  return Expr('/',  self, rhs)
-    def __floordiv__(self, rhs): return Expr('//', self, rhs)
-    def __matmul__(self, rhs):   return Expr('@',  self, rhs)
+    def __neg__(self):
+        return Expr('-', self)
+
+    def __pos__(self):
+        return Expr('+', self)
+
+    def __invert__(self):
+        return Expr('~', self)
+
+    def __add__(self, rhs):
+        return Expr('+', self, rhs)
+
+    def __sub__(self, rhs):
+        return Expr('-', self, rhs)
+
+    def __mul__(self, rhs):
+        return Expr('*', self, rhs)
+
+    def __pow__(self, rhs):
+        return Expr('**', self, rhs)
+
+    def __mod__(self, rhs):
+        return Expr('%', self, rhs)
+
+    def __and__(self, rhs):
+        return Expr('&', self, rhs)
+
+    def __xor__(self, rhs):
+        return Expr('^', self, rhs)
+
+    def __rshift__(self, rhs):
+        return Expr('>>', self, rhs)
+
+    def __lshift__(self, rhs):
+        return Expr('<<', self, rhs)
+
+    def __truediv__(self, rhs):
+        return Expr('/', self, rhs)
+
+    def __floordiv__(self, rhs):
+        return Expr('//', self, rhs)
+
+    def __matmul__(self, rhs):
+        return Expr('@', self, rhs)
 
     def __or__(self, rhs):
         "Allow both P | Q, and P |'==>'| Q."
@@ -390,20 +421,47 @@ class Expr(object):
             return PartialExpr(rhs, self)
 
     # Reverse operator overloads
-    def __radd__(self, lhs): return Expr('+',  lhs, self)
-    def __rsub__(self, lhs): return Expr('-',  lhs, self)
-    def __rmul__(self, lhs): return Expr('*',  lhs, self)
-    def __rdiv__(self, lhs): return Expr('/',  lhs, self)
-    def __rpow__(self, lhs): return Expr('**', lhs, self)
-    def __rmod__(self, lhs): return Expr('%',  lhs, self)
-    def __rand__(self, lhs): return Expr('&',  lhs, self)
-    def __rxor__(self, lhs): return Expr('^',  lhs, self)
-    def __ror__(self, lhs):  return Expr('|',  lhs, self)
-    def __rrshift__(self, lhs):   return Expr('>>',  lhs, self)
-    def __rlshift__(self, lhs):   return Expr('<<',  lhs, self)
-    def __rtruediv__(self, lhs):  return Expr('/',  lhs, self)
-    def __rfloordiv__(self, lhs): return Expr('//',  lhs, self)
-    def __rmatmul__(self, lhs):   return Expr('@', lhs, self)
+    def __radd__(self, lhs):
+        return Expr('+', lhs, self)
+
+    def __rsub__(self, lhs):
+        return Expr('-', lhs, self)
+
+    def __rmul__(self, lhs):
+        return Expr('*', lhs, self)
+
+    def __rdiv__(self, lhs):
+        return Expr('/', lhs, self)
+
+    def __rpow__(self, lhs):
+        return Expr('**', lhs, self)
+
+    def __rmod__(self, lhs):
+        return Expr('%', lhs, self)
+
+    def __rand__(self, lhs):
+        return Expr('&', lhs, self)
+
+    def __rxor__(self, lhs):
+        return Expr('^', lhs, self)
+
+    def __ror__(self, lhs):
+        return Expr('|', lhs, self)
+
+    def __rrshift__(self, lhs):
+        return Expr('>>', lhs, self)
+
+    def __rlshift__(self, lhs):
+        return Expr('<<', lhs, self)
+
+    def __rtruediv__(self, lhs):
+        return Expr('/', lhs, self)
+
+    def __rfloordiv__(self, lhs):
+        return Expr('//', lhs, self)
+
+    def __rmatmul__(self, lhs):
+        return Expr('@', lhs, self)
 
     def __call__(self, *args):
         "Call: if 'f' is a Symbol, then f(0) == Expr('f', 0)."
@@ -426,13 +484,14 @@ class Expr(object):
     def __repr__(self):
         op = self.op
         args = [str(arg) for arg in self.args]
-        if op.isidentifier():       # f(x) or f(x, y)
+        if op.isidentifier():  # f(x) or f(x, y)
             return '{}({})'.format(op, ', '.join(args)) if args else op
-        elif len(args) == 1:        # -x or -(x + 1)
+        elif len(args) == 1:  # -x or -(x + 1)
             return op + args[0]
-        else:                       # (x - y)
+        else:  # (x - y)
             opp = (' ' + op + ' ')
             return '(' + opp.join(args) + ')'
+
 
 # An 'Expression' is either an Expr or a Number.
 # Symbol is not an explicit type; it is any Expr with 0 args.
@@ -466,13 +525,17 @@ def arity(expression):
     else:  # expression is a number
         return 0
 
+
 # For operators that are not defined in Python, we allow new InfixOps:
 
 
 class PartialExpr:
     """Given 'P |'==>'| Q, first form PartialExpr('==>', P), then combine with Q."""
+
     def __init__(self, op, lhs): self.op, self.lhs = op, lhs
+
     def __or__(self, rhs):       return Expr(self.op, self.lhs, rhs)
+
     def __repr__(self):          return "PartialExpr('{}', {})".format(self.op, self.lhs)
 
 
@@ -488,6 +551,7 @@ def expr(x):
         return eval(expr_handle_infix_ops(x), defaultkeydict(Symbol))
     else:
         return x
+
 
 infix_ops = '==> <== <=>'.split()
 
@@ -507,6 +571,7 @@ class defaultkeydict(collections.defaultdict):
     >>> d = defaultkeydict(len); d['four']
     4
     """
+
     def __missing__(self, key):
         self[key] = result = self.default_factory(key)
         return result
@@ -520,7 +585,6 @@ class defaultkeydict(collections.defaultdict):
 
 
 class Queue:
-
     """Queue is an abstract class/interface. There are three types:
         Stack(): A Last In First Out Queue.
         FIFOQueue(): A First In First Out Queue.
@@ -615,6 +679,7 @@ class PriorityQueue(Queue):
 class Bool(int):
     """Just like `bool`, except values display as 'T' and 'F' instead of 'True' and 'False'"""
     __str__ = __repr__ = lambda self: 'T' if self else 'F'
+
 
 T = Bool(True)
 F = Bool(False)
